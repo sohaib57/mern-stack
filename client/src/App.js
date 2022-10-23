@@ -1,12 +1,26 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import "./App.css";
 
+const initialForm = {
+  amount: 0,
+  description: "",
+  date: "",
+};
+
 function App() {
-  const [form, setForm] = useState({
-    amount: 0,
-    description: "",
-    date: "",
-  });
+  const [form, setForm] = useState(initialForm);
+  const [transactions, setTransactions] = useState([]);
+
+  useEffect(() => {
+    fetchTransactions();
+  }, []);
+
+  const fetchTransactions = async () => {
+    const res = await fetch("http://localhost:4000/transaction");
+    const { data } = await res.json();
+    console.log("🚀 ~ file: App.js ~ line 19 ~ fetchTransactions ~ data", data);
+    setTransactions(data);
+  };
 
   const handleInput = (e) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -16,10 +30,15 @@ function App() {
     e.preventDefault();
     const res = await fetch("http://localhost:4000/transaction", {
       method: "POST",
-      body: form,
+      body: JSON.stringify(form),
+      headers: {
+        "Content-type": "application/json",
+      },
     });
-
-    console.log(res);
+    if (res.ok) {
+      setForm(initialForm);
+      fetchTransactions();
+    }
   };
 
   return (
@@ -47,6 +66,26 @@ function App() {
         />
         <button type="submit">Submit</button>
       </form>
+
+      <br />
+      <section>
+        <table>
+          <thead>
+            <th>Amount</th>
+            <th>description</th>
+            <th>Date</th>
+          </thead>
+          <tbody>
+            {transactions.map((trx) => (
+              <tr key={trx._id}>
+                <td>{trx.amount}</td>
+                <td>{trx.description}</td>
+                <td>{trx.date}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </section>
     </div>
   );
 }
