@@ -4,6 +4,7 @@ import bodyParser from "body-parser";
 const app = express();
 const PORT = 4000;
 import TransactionsApi from "./routes/TransactionsApi.js";
+import AuthApi from "./routes/AuthApi.js"
 import connect from "./database/mongoDB.js";
 
 app.use(cors());
@@ -14,6 +15,7 @@ app.get("/", (req, res) => {
 });
 
 app.use("/transaction", TransactionsApi);
+app.use("/auth",  AuthApi);
 
 await connect();
 
