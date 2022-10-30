@@ -3,7 +3,7 @@ import Avatar from "@mui/material/Avatar";
 import Button from "@mui/material/Button";
 import CssBaseline from "@mui/material/CssBaseline";
 import TextField from "@mui/material/TextField";
-import { Link as Routerlink } from "react-router-dom";
+import { Link as Routerlink, useNavigate } from "react-router-dom";
 import { Link } from "@mui/material";
 import Grid from "@mui/material/Grid";
 import Box from "@mui/material/Box";
@@ -12,6 +12,7 @@ import Typography from "@mui/material/Typography";
 import Container from "@mui/material/Container";
 
 export default function Register() {
+  const navigate = useNavigate();
   const handleSubmit = async (event) => {
     event.preventDefault();
 
@@ -23,7 +24,7 @@ export default function Register() {
       password: data.get("password"),
     };
 
-    const res = await fetch("http://localhost:4000/auth/register", {
+    const res = await fetch(`${process.env.REACT_APP_API_URL}/auth/register`, {
       method: "POST",
       body: JSON.stringify(form),
       headers: {
@@ -32,7 +33,7 @@ export default function Register() {
     });
 
     if (res.ok) {
-      console.log("success");
+      navigate("/login");
     }
   };
 
